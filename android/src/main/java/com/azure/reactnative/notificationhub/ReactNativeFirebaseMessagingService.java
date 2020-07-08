@@ -95,6 +95,7 @@ public class ReactNativeFirebaseMessagingService extends FirebaseMessagingServic
             bundle.putBoolean(KEY_REMOTE_NOTIFICATION_FOREGROUND, true);
             bundle.putBoolean(KEY_REMOTE_NOTIFICATION_USER_INTERACTION, false);
             bundle.putBoolean(KEY_REMOTE_NOTIFICATION_COLDSTART, false);
+            ReactNativeNotificationsHandler.sendNotification(this, bundle, notificationChannelID);
         } else {
             ReactNativeNotificationsHandler.sendNotification(this, bundle, notificationChannelID);
         }
