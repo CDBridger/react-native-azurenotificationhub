@@ -420,9 +420,9 @@ public class ReactNativeNotificationHubModule extends ReactContextBaseJavaModule
     public class LocalBroadcastReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (getIsForeground()) {
+            //if (getIsForeground()) {
                 ReactNativeUtil.emitIntent(mReactContext, intent);
-            }
+            //}
         }
     }
 
