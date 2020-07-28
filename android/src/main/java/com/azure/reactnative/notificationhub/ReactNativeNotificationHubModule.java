@@ -409,7 +409,7 @@ public class ReactNativeNotificationHubModule extends ReactContextBaseJavaModule
             bundle.putBoolean(KEY_REMOTE_NOTIFICATION_FOREGROUND, false);
             bundle.putBoolean(KEY_REMOTE_NOTIFICATION_USER_INTERACTION, true);
             ReactNativeNotificationsHandler.sendBroadcast(
-                    mReactContext, bundle, NOTIFICATION_DELAY_ON_START);
+                    mReactContext, bundle, 0);
         }
     }
 
