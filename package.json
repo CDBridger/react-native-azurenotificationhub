@@ -5,7 +5,7 @@
   "main": "index.js",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/CatalystCode/react-native-azurenotificationhub.git"
+    "url": "git+https://github.com/CDBridger/react-native-azurenotificationhub.git"
   },
   "keywords": [
     "Azure",
