@@ -37,6 +37,7 @@ public class ReactNativeNotificationHubModule extends ReactContextBaseJavaModule
 
     private ReactApplicationContext mReactContext;
     private LocalBroadcastReceiver mLocalBroadcastReceiver;
+    private Bundle mHostResumeBundle = null;
 
     public ReactNativeNotificationHubModule(ReactApplicationContext reactContext) {
         super(reactContext);
@@ -67,20 +68,27 @@ public class ReactNativeNotificationHubModule extends ReactContextBaseJavaModule
     @ReactMethod
     public void getInitialNotification(Promise promise) {
         Activity activity = getCurrentActivity();
-        if (activity == null) {
+        if (activity == null && mHostResumeBundle == null) {
             promise.reject(ERROR_GET_INIT_NOTIFICATION, ERROR_ACTIVITY_IS_NULL);
             return;
         }
 
         Intent intent = activity.getIntent();
-        if (intent != null && intent.getAction() != null) {
-            if (intent.getExtras() == null) {
+        if ((intent != null && intent.getAction() != null) || mHostResumeBundle != null) {
+            Bundle intentExtras = null;
+                
+            if (intent != null) {
+                 intentExtras = intent.getExtras();
+            }
+                
+            if (intentExtras == null && mHostResumeBundle == null) {
                 // In certain cases while app cold launches, i.getExtras() returns null.
                 // Adding the check to make sure app won't crash,
                 // and still successfully launches from notification
                 promise.reject(ERROR_GET_INIT_NOTIFICATION, ERROR_INTENT_EXTRAS_IS_NULL);
             } else {
-                promise.resolve(ReactNativeUtil.convertBundleToMap(intent.getExtras()));
+                promise.resolve(ReactNativeUtil.convertBundleToMap(intentExtras != null ? intentExtras : mHostResumeBundle));
+                mHostResumeBundle = null;
             }
         } else {
             promise.reject(ERROR_GET_INIT_NOTIFICATION, ERROR_ACTIVITY_INTENT_IS_NULL);
@@ -386,8 +394,9 @@ public class ReactNativeNotificationHubModule extends ReactContextBaseJavaModule
                     bundle.putBoolean(KEY_REMOTE_NOTIFICATION_FOREGROUND, false);
                     bundle.putBoolean(KEY_REMOTE_NOTIFICATION_USER_INTERACTION, true);
                     bundle.putBoolean(KEY_REMOTE_NOTIFICATION_COLDSTART, true);
-                    ReactNativeNotificationsHandler.sendBroadcast(
-                            mReactContext, bundle, NOTIFICATION_DELAY_ON_START);
+                    mHostResumeBundle = (Bundle)bundle.clone();
+                    //ReactNativeNotificationsHandler.sendBroadcast(
+                    //        mReactContext, bundle, NOTIFICATION_DELAY_ON_START);
                 }
             }
         }
